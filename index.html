@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>桃園市 1999 市政儀表板</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanstc.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+	<link rel="stylesheet" href="css/streamgraph.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="icon" type="image/png" href="/favicon.png" />
+	<meta name="description" content="桃園市 1999 市政儀表板：用 Open1999 開放資料做視覺化" />
+	<link rel="canonical" href="https://1999.noob.tw" />
+	<meta property="og:site_name" content="桃園市 1999 市政儀表板" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="桃園市 1999 市政儀表板" />
+	<meta property="og:description" content="桃園市 1999 市政儀表板：用 Open1999 開放資料做視覺化" />
+	<meta property="og:url" content="https://1999.noob.tw" />
+	<meta name="twitter:title" content="桃園市 1999 市政儀表板" />
+	<meta name="twitter:description" content="桃園市 1999 市政儀表板：用 Open1999 開放資料做視覺化" />
+	<meta name="twitter:url" content="https://1999.noob.tw" />
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			"author": {
+				"@type": "Person",
+				"name": "Noob Tsai",
+				"image": {
+					"@type": "ImageObject",
+					"url": "//www.gravatar.com/avatar/73140f84a82b985e366caecad6451ae3?s=250&d=mm&r=x",
+					"width": 250,
+					"height": 250
+				},
+				"url": "https://noob.tw",
+				"sameAs": [
+					"https://www.facebook.com/chiachint",
+					"https://twitter.com/noobtw7"
+				]
+			},
+			"url": "https://1999.noob.tw",
+			"mainEntityOfPage": {
+				"@type": "WebPage",
+				"@id": "https://1999.noob.tw"
+			},
+			"description": "桃園市 1999 市政儀表板：用桃園市政信箱開放資料做視覺化"
+		}
+	</script>
+
+</head>
+<body>
+	<header>
+		<h1>桃園市 1999 市政儀表板</h1>
+		<nav>
+			<ul>
+				<li data-to="dashboard" class="active"><i class="fas fa-tachometer-alt"></i></li>
+				<li data-to="list"><i class="fas fa-list-ul"></i></li>
+				<li data-to="map"><i class="fas fa-map"></i></li>
+				<li data-to="the-streamgraph"><i class="fas fa-chart-line"></i></li>
+			</ul>
+		</nav>
+		<!-- <div id="day"></div> -->
+	</header>
+	<div id="loading">
+		<div id="loading-spinner">
+			<i class="fas fa-spin fa-5x fa-spinner"></i>
+			<p>正在努力讀取市政信箱資料</p>
+		</div>
+	</div>
+	<div class="date">
+		<div class="dib" id="yesterday">
+			<i class="fas fa-angle-double-left"></i>
+		</div>
+		<div class="dib" id="today">
+			<i class="fas fa-calendar"></i>
+		</div>
+		<input class="unstyled" type="date" id="day" placeholder="2018-05-21"/>
+		<div class="dib" id="tomorrow">
+			<i class="fas fa-angle-double-right"></i>
+		</div>
+	</div>
+	<section class="dashboard">
+		<div class="work" id="work-road">
+			<div class="work-title"><i class="fas fa-road"></i> 道路不平</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<div class="work-count">0</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-pipe">
+			<div class="work-title"><i class="fas fa-tint"></i> 積水、汙水管</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-light">
+			<div class="work-title"><i class="fas fa-lightbulb"></i> 路燈故障</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-park">
+			<div class="work-title"><i class="fas fa-tree"></i> 公園、路樹、人行道</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-traffic">
+			<div class="work-title"><i class="fas fa-sign"></i> 交通號誌</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-car">
+			<div class="work-title"><i class="fas fa-car"></i> 交通違規、路霸</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-noise">
+			<div class="work-title"><i class="fas fa-bullhorn"></i> 髒亂、噪音、空汙</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-animal">
+			<div class="work-title"><i class="fas fa-paw"></i> 動物保護</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-view">
+			<div class="work-title"><i class="fas fa-seedling"></i> 風景區維護</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-water">
+			<div class="work-title"><i class="fas fa-bath"></i> 自來水相關</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-electricity">
+			<div class="work-title"><i class="fas fa-bolt"></i> 電力相關</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="work" id="work-gas">
+			<div class="work-title"><i class="fas fa-industry"></i> 不明氣體外洩</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="card" id="count-districts">
+			<div class="work-title"><i class="fas fa-map-marker"></i> 各地區受理案件</div>
+			<div id="map_small"></div>
+		</div>
+		<div class="card card-blue" id="count-today">
+			<div class="work-title"><i class="fas fa-calendar-alt"></i> 今日各時段案件</div>
+			<div class="work-count">0</div>
+			<div class="yesterday">
+				<div class="yesterday-count">△ +0(+0%)</div>
+				<div class="yesterday-desc">和前一天此時相比</div>
+			</div>
+			<canvas></canvas>
+		</div>
+		<div class="card " id="count-donut">
+			<div class="work-title"><i class="fas fa-circle-notch"></i> 今日案件分類</div>
+			<canvas></canvas>
+		</div>
+		<div class="card" id="count-achivement">
+			<div class="work-title"><i class="far fa-check-square"></i> 今日案件結案率</div>
+			<div class="work-count work-count-down">0%</div>
+		</div>
+		<!-- <div class="card" id="count-achivement-pro">
+			<div class="work-title"><i class="fas fa-check-square"></i> 今日案件解除管制率</div>
+			<div class="work-count work-count-down">0%</div>
+		</div> -->
+		<!-- <div class="card card-blue" id="count-achivement-time-pro">
+			<div class="work-title"><i class="fas fa-check-square"></i> 解除管制平均時間</div>
+			<div class="work-count work-count-down">0:00</div>
+		</div> -->
+	</section>
+	<section class="list">
+		<div class="list-filter-container">
+				<div class="list-filter" data-filter="work-road">道路不平</div><!--
+				--><div class="list-filter" data-filter="work-pipe">積水、汙水管</div><!--
+				--><div class="list-filter" data-filter="work-light">路燈故障</div><!--
+				--><div class="list-filter" data-filter="work-park">公園、路樹、人行道</div><!--
+				--><div class="list-filter" data-filter="work-traffic">交通號誌</div><!--
+				--><div class="list-filter" data-filter="work-car">交通違規、路霸</div><!--
+				--><div class="list-filter" data-filter="work-noise">髒亂、噪音、空汙</div><!--
+				--><div class="list-filter" data-filter="work-animal">動物保護</div><!--
+				--><div class="list-filter" data-filter="work-view">風景區維護</div><!--
+				--><div class="list-filter" data-filter="work-water">自來水相關</div><!--
+				--><div class="list-filter" data-filter="work-electricity">電力相關</div><!--
+				--><div class="list-filter" data-filter="work-gas">不明氣體外洩</div><!--
+				--><div class="list-filter active" data-filter="all">顯示全部</div>
+			</div>
+		<table id="list-table">
+			<thead>
+				<tr>
+					<th>案號</th>
+					<th>行政區</th>
+					<th>地址</th>
+					<th>反映類別</th>
+					<th>反映時間</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<div id="go-top">
+			<i class="animated infinite hand fas fa-hand-point-up"></i>
+		</div>
+	</section>
+	<section class="map">
+		<div id="map"></div>
+		<div class="map-filter-container">
+			<div class="map-filter" data-filter="work-road">道路不平</div><!--
+			--><div class="map-filter" data-filter="work-pipe">積水、汙水管</div><!--
+			--><div class="map-filter" data-filter="work-light">路燈故障</div><!--
+			--><div class="map-filter" data-filter="work-park">公園、路樹、人行道</div><!--
+			--><div class="map-filter" data-filter="work-traffic">交通號誌</div><!--
+			--><div class="map-filter" data-filter="work-car">交通違規、路霸</div><!--
+			--><div class="map-filter" data-filter="work-noise">髒亂、噪音、空汙</div><!--
+			--><div class="map-filter" data-filter="work-animal">動物保護</div><!--
+			--><div class="map-filter" data-filter="work-view">風景區維護</div><!--
+			--><div class="map-filter" data-filter="work-water">自來水相關</div><!--
+			--><div class="map-filter" data-filter="work-electricity">電力相關</div><!--
+			--><div class="map-filter" data-filter="work-gas">不明氣體外洩</div><!--
+			--><div class="map-filter active" data-filter="all">顯示全部</div>
+		</div>
+		<div class="timeline">
+			<div class="timeline-control">
+				<div class="timeline-slow"><i class="fas fa-backward"></i></div>
+				<div class="timeline-play"><i class="fas fa-play"></i></div>
+				<div class="timeline-fast"><i class="fas fa-forward"></i></div>
+				<div class="timeline-speed">1x</div>
+				<input type="range" min="0" max="1439" value="1439">
+				<div class="timeline-now">00:00</div>
+			</div>
+		</div>
+	</section>
+	<section class="the-streamgraph">
+		<div class="streamgraph-wrapper col-md-12">
+			<div class="streamgraph" column="type" filterBy="tycg" groupBy="place"></div>
+			<h3>載入中</h3>
+		</div>
+	</section>
+	<footer>
+		<div class="footer-c"><i class="fas fa-copyright"></i> 我的組長又叫 Danny · 2018</div>
+		<div class="footer-g"><i class="fab fa-github"></i> <a href="https://github.com/NoobTW/tycg-1999-dashboard">NoobTW/tycg-1999-dashboard</a></div>
+		<div class="footer-src"><i class="fas fa-file-alt"></i> 資料來源：<a href="http://data.tycg.gov.tw">桃園市政府</a>、<a href="https://data.gov.tw">政府資料開放平臺</a></div>
+	</footer>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/locale/zh-tw.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.3.6/chroma.min.js"></script>
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.map"></script>
+	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+	<script src="js/all.js"></script>
+	<script src="js/streamgraph.js"></script>
+</body>
+</html>
