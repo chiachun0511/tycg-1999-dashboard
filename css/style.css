@@ -1,6 +1,6 @@
 body{
 	font-family: "Noto Sans TC", sans-serif;
-	background: #A2AEBB;
+	background: #a887a6;
 }
 
 .unstyled::-webkit-inner-spin-button,
@@ -35,7 +35,7 @@ section{
 
 header{
 	/* font-family: "Rounded Mplus 1c"; */
-	background: #1c3144;
+	background: #633761;
 	color: #f2f2f2;
 	font-size: 2rem;
 	position: relative;
@@ -220,12 +220,12 @@ canvas{
 
 #list-table td{
 	white-space: nowrap;
-	background: #b6bfc9;
+	background: #bea6be;
 	padding: 1rem;
 }
 
 #list-table tr:hover td{
-	background: #c9d0d8;
+	background: #ccb4cc;
 }
 
 #list-table td:nth-child(2){
@@ -276,7 +276,7 @@ canvas{
 }
 
 footer{
-	background: #b2cadf;
+	background: #c7a8c5;
 	text-align: center;
 	letter-spacing: .5px;
 	font-size: .9rem;
